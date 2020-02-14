@@ -1,6 +1,5 @@
 const express = require('express')
 const https = require('https')
-const message = require('js-message')
 const bodyParser = require('body-parser')
 
 const app = express()
