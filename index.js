@@ -1,5 +1,6 @@
 const express = require('express');
 const https = require('https');
+const _ = require('lodash');
 
 const app = express();
 const port = 3000;
@@ -7,9 +8,9 @@ app.use(express.urlencoded({ extended: false }));
 
 const acceptPost = () => {
 	app.post('/', function(request, response) {
-		const currencyFrom = request.body['currencyFrom'];
-		const currencyFromValue = request.body['currencyFromValue'];
-		const currencyTo = request.body['currencyTo'];
+		const currencyFrom = _.get(request, 'body.currencyFrom');
+		const currencyFromValue = _.get(request, 'body.currencyFromValue');
+		const currencyTo = _.get(request, 'body.currencyTo');	
 		getCurrencies(currencyFrom, currencyFromValue, currencyTo);
 
 		response.writeHead(200, {'Content-Type': 'text/html'});
