@@ -1,5 +1,5 @@
 const express = require('express');
-const https = require('https');
+const axios = require('axios');
 const _ = require('lodash');
 
 const app = express();
@@ -19,17 +19,21 @@ const acceptPost = () => {
 };
 
 const getCurrencies = (currencyFrom, currencyFromValue, currencyTo) => {
-	https.get(`https://api.exchangerate-api.com/v4/latest/${currencyFrom}`, (res) => {
-
-	res.on('data', (data) => {
-		const parsedRates = (JSON.parse(data)['rates']);
-		const currencyToValue = parsedRates[currencyTo];
-		convertCurrencies(currencyFromValue, currencyToValue, currencyTo);
+	const exchangeApi = axios.create({
+		baseURL: 'https://api.exchangerate-api.com/v4/latest/',
+		timeout: 1500,
+		headers: {'Content-Type': 'text/plain'}
 	});
 
-	}).on('error', (err) => {
-		console.log('Error: ' + err.message);
-	});
+	exchangeApi.get(currencyFrom)
+		.then(function (response) {
+			let parsedRates = _.get(response, 'data.rates');
+			let currencyToValue = _.get(parsedRates, currencyTo);
+			convertCurrencies(currencyFromValue, currencyToValue, currencyTo);
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
 };
 
 const convertCurrencies = (currencyFromValue, currencyToValue, currencyTo) => {
